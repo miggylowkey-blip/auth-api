@@ -6,9 +6,14 @@ import (
 	"auth-api/middleware"
 	"fmt"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	godotenv.Load()
+
 	db.Connect()
 
 	mux := http.NewServeMux()

@@ -14,8 +14,8 @@ var DB *sql.DB
 func Connect() {
 	host := getenv("DB_HOST", "localhost")
 	user := getenv("DB_USER", "postgres")
-	password := getenv("DB_PASSWORD", "Miggyisgood1!")
-	dbname := getenv("DB_NAME", "authdb")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
 	sslmode := getenv("DB_SSLMODE", "disable")
 
 	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=%s", host, user, password, dbname, sslmode)
@@ -27,7 +27,6 @@ func Connect() {
 		panic(err)
 	}
 
-	// Retry connection up to 30 times with 1s interval (matches healthcheck)
 	for i := 0; i < 30; i++ {
 		err = DB.Ping()
 		if err == nil {
