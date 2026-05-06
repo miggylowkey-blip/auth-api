@@ -21,4 +21,3 @@ func (rr *responseRecorder) Write(b []byte) (int, error) {
 	rr.bytes += n
 	return n, err
 }
-
