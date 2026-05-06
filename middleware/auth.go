@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"strings"
@@ -35,6 +36,22 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		ctx := r.Context()
+		if claims, ok := token.Claims.(jwt.MapClaims); ok {
+			if raw, ok := claims["userId"]; ok {
+				switch v := raw.(type) {
+				case float64:
+					ctx = context.WithValue(ctx, ctxKeyUserID, int(v))
+				case int:
+					ctx = context.WithValue(ctx, ctxKeyUserID, v)
+				case int64:
+					ctx = context.WithValue(ctx, ctxKeyUserID, int(v))
+				case string:
+					ctx = context.WithValue(ctx, ctxKeyUserID, v)
+				}
+			}
+		}
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

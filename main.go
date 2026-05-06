@@ -23,5 +23,9 @@ func main() {
 	mux.Handle("GET /profile", middleware.AuthMiddleware(http.HandlerFunc(handlers.Profile)))
 
 	fmt.Println("Server Running on 8080")
-	http.ListenAndServe(":8080", mux)
+	var h http.Handler = mux
+	h = middleware.WithRequestID(h)
+	h = middleware.RateLimitMiddleware(h)
+	h = middleware.AuditMiddleware(h)
+	http.ListenAndServe(":8080", h)
 }
