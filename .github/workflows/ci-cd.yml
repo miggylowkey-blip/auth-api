@@ -45,6 +45,15 @@ jobs:
       - name: Validate Dockerfile builds
         run: docker build -t auth-api:ci .
 
+      - name: Scan Docker image (Trivy)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: auth-api:ci
+          format: table
+          exit-code: 1
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+
   publish:
     name: Publish image (GHCR)
     needs: ci
@@ -107,15 +116,3 @@ jobs:
           format: table
           exit-code: 1
           severity: HIGH,CRITICAL
-
-        - name Validate Dockerfile builds  
-        run: docker build -t auth-api:ci .
-
-        - name Scan Docker image (Trivy)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: auth-api:ci
-          format: table
-          exit-code: 1
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
